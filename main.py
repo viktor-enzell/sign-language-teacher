@@ -1,32 +1,27 @@
 import cv2
 import time
 from tensorflow import keras
-from tensorflow.keras import applications
 from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 
 img_name = 'img/opencv_frame.png'
-img_width, img_height = 64, 64
+cam_width, cam_height = 640, 480
+img_display_size = 360
+img_size = 64
+
 img_freq = 1
 labels_short = ['a', 'b', 'c', 'd', 'e', '']
-labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+labels_long = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
           'w', 'x', 'y', 'z', '', ' ', 'del']
 
 model = keras.models.load_model('models/CNN')
 
-feature_extractor = applications.VGG16(
-    include_top=False,
-    weights='imagenet',
-    input_shape=(img_width, img_height, 3)
-)
-
 
 def make_prediction():
-    img = preprocess_input(img_to_array(load_img(img_name, target_size=(img_width, img_height))))
-    img = img.reshape(1, img_width, img_height, 3)
+    img = preprocess_input(img_to_array(load_img(img_name, target_size=(img_size, img_size))))
+    img = img.reshape(1, img_size, img_size, 3)
 
-    # features = feature_extractor.predict(img)
     prediction = model.predict(img)
 
     prediction_label = labels_short[np.argmax(prediction)]
@@ -37,29 +32,22 @@ def make_prediction():
 
 def run():
     cam = cv2.VideoCapture(0)
-    cv2.namedWindow('test')
+    cv2.namedWindow('Sign Language Teacher')
 
-    cam.set(3, 640)
-    cam.set(4, 480)
+    cam.set(3, cam_width)
+    cam.set(4, cam_height)
 
     latest_prediction = ''
     latest_img_time = time.time()
     while True:
         ret, frame = cam.read()
         if not ret:
-            print('failed to grab frame')
+            print('Failed to grab frame')
             break
-        # TODO: look up if the frame can be cropped instead of stretched
-        frame = cv2.resize(frame, (img_width * 6, img_height * 6), interpolation=cv2.INTER_AREA)
 
-        cv2.putText(
-            frame, f'Letter: {latest_prediction}',
-            (50, 50),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1, (255, 255, 255), 1
-        )
-
-        cv2.imshow('Sign Language Teacher', frame)
+        # Only capture a square area of size img_display_size
+        frame = frame[int(cam_height / 2 - img_display_size / 2):int(cam_height / 2 + img_display_size / 2),
+                int(cam_width / 2 - img_display_size / 2):int(cam_width / 2 + img_display_size / 2)]
 
         k = cv2.waitKey(1)
         if k % 256 == 27:
@@ -74,6 +62,15 @@ def run():
                   'Image captured')
 
             latest_prediction = make_prediction()
+
+        cv2.putText(
+            frame, f'Letter: {latest_prediction}',
+            (50, 50),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1, (255, 255, 255), 1
+        )
+
+        cv2.imshow('Sign Language Teacher', frame)
 
     cam.release()
     cv2.destroyAllWindows()
