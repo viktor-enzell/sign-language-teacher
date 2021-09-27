@@ -1,0 +1,5 @@
+img/*
+models/NN
+models/VGG16
+.DS_Store
+.idea
