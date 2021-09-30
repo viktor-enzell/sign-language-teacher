@@ -64,7 +64,7 @@ def run():
             if key == ord(' '):
                 break
 
-            if assistant.finished_speaking_time < time.time():
+            if assistant.finished_speaking():
                 if assistant.has_suggested:
                     correct_sign = make_prediction_and_check_if_correct()
                     if correct_sign:
