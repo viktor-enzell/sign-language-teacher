@@ -1,4 +1,3 @@
-import random
 import mediapipe as mp
 import cv2
 import time
@@ -16,8 +15,8 @@ prediction_freq = 2
 labels_short = ['a', 'b', 'c', 'd', 'e']
 
 
-def make_prediction():
-    return random.choice(labels_short)
+def make_prediction_and_check_if_correct():
+    return False
 
 
 def run():
@@ -26,9 +25,6 @@ def run():
 
     # For webcam input:
     cap = cv2.VideoCapture(0)
-
-    latest_prediction = ''
-    latest_prediction_time = time.time()
 
     with mp_hands.Hands(
             max_num_hands=1,
@@ -68,11 +64,15 @@ def run():
             if key == ord(' '):
                 break
 
-            if time.time() - latest_prediction_time > prediction_freq:
-                # Make a prediction every prediction_freq seconds
-                latest_prediction_time = time.time()
-                user_letter = make_prediction()
-                assistant.check_letter(user_letter)
+            if assistant.finished_speaking_time < time.time():
+                if assistant.has_suggested:
+                    correct_sign = make_prediction_and_check_if_correct()
+                    if correct_sign:
+                        assistant.correct()
+                    else:
+                        assistant.incorrect()
+                else:
+                    assistant.suggest_letter()
 
             cv2.imshow('MediaPipe Hands', image)
 
