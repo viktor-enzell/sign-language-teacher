@@ -39,6 +39,7 @@ class VoiceAssistant:
 
     def correct(self):
         self.text_to_speech('Correct!')
+        self.has_suggested = False
 
     def incorrect(self):
         self.text_to_speech('Not quite there yet. Try again!')
