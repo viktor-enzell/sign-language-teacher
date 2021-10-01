@@ -16,9 +16,9 @@ class VoiceAssistant:
 
     def text_to_speech(self, text):
         tts = gtts.gTTS(text)
-        tts.save('voice.mp3')
-        playsound('voice.mp3', False)
-        with audioread.audio_open('voice.mp3') as f:
+        tts.save('tmp/voice.mp3')
+        playsound('tmp/voice.mp3', False)
+        with audioread.audio_open('tmp/voice.mp3') as f:
             current_time = time.time()
             audio_duration = f.duration
             self.finished_speaking_time = current_time + audio_duration + 1
@@ -33,7 +33,7 @@ class VoiceAssistant:
 
     def suggest_letter(self):
         self.current_letter = random.choice(labels)
-        self.text_to_speech(f'Do the sign-language sign for letter {self.current_letter}')
+        self.text_to_speech(f'Do the sign-language sign for letter {self.current_letter.upper()}')
         self.has_suggested = True
         return self.current_letter
 

@@ -1,7 +1,7 @@
 .venv
-img/*
-models/NN
-models/VGG16
+tmp/voice.mp3
+tmp/opencv_frame.png
+models
 .DS_Store
 .idea
-voice.mp3
+__pycache__
