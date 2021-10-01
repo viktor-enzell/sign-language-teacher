@@ -1,13 +1,12 @@
 import random
 import time
-
+from labels import labels
 import gtts
 from playsound import playsound
 import audioread
 
 
 class VoiceAssistant:
-    labels_short = ['a', 'b', 'c', 'd', 'e']
     current_letter = None
     finished_speaking_time = None
     has_suggested = False
@@ -33,7 +32,7 @@ class VoiceAssistant:
                             'Let\'s go!')
 
     def suggest_letter(self):
-        self.current_letter = random.choice(self.labels_short)
+        self.current_letter = random.choice(labels)
         self.text_to_speech(f'Do the sign-language sign for letter {self.current_letter}')
         self.has_suggested = True
         return self.current_letter

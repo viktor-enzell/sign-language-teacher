@@ -1,8 +1,10 @@
 import mediapipe as mp
 import cv2
-import time
-
+from tensorflow import keras
+import numpy as np
+from preprocessing import preprocess_keypoints
 from voice_assistant import VoiceAssistant
+from labels import labels
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -12,15 +14,19 @@ update_time = 10
 save_time = 1000
 prediction_freq = 2
 
-labels_short = ['a', 'b', 'c', 'd', 'e']
+assistant = VoiceAssistant()
+model = keras.models.load_model('model')
 
 
-def make_prediction_and_check_if_correct():
-    return False
+def make_prediction_and_check_if_correct(hand_landmarks):
+    preprocessed_input = preprocess_keypoints(hand_landmarks)
+    prediction = model.predict(preprocessed_input)
+    predicted_letter = labels[np.argmax(prediction)]
+    print(f'Current letter: {assistant.current_letter}. Predicted letter: {predicted_letter}')
+    return predicted_letter == assistant.current_letter
 
 
 def run():
-    assistant = VoiceAssistant()
     assistant.welcome()
 
     # For webcam input:
@@ -61,18 +67,15 @@ def run():
                     mp_drawing_styles.get_default_hand_landmarks_style(),
                     mp_drawing_styles.get_default_hand_connections_style())
 
+                if assistant.finished_speaking():
+                    if assistant.has_suggested:
+                        correct_sign = make_prediction_and_check_if_correct(hand_landmarks)
+                        assistant.correct() if correct_sign else assistant.incorrect()
+                    else:
+                        assistant.suggest_letter()
+
             if key == ord(' '):
                 break
-
-            if assistant.finished_speaking():
-                if assistant.has_suggested:
-                    correct_sign = make_prediction_and_check_if_correct()
-                    if correct_sign:
-                        assistant.correct()
-                    else:
-                        assistant.incorrect()
-                else:
-                    assistant.suggest_letter()
 
             cv2.imshow('MediaPipe Hands', image)
 
