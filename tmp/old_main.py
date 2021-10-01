@@ -5,7 +5,7 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 
-img_name = 'tmp/opencv_frame.png'
+img_name = 'opencv_frame.png'
 cam_width, cam_height = 640, 480
 img_display_size = 360
 img_size = 64
