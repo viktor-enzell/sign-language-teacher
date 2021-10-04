@@ -81,7 +81,7 @@ def run():
                         correct_sign = check_letter(hand_landmarks)
                         assistant.correct() if correct_sign else assistant.incorrect()
                 else:
-                    assistant.suggest_letter()
+                    assistant.suggest_letter()       
                 
                 # Saving the number of attempts in a dictionary 
                 if assistant.current_letter in user_attempts.keys():
@@ -114,8 +114,11 @@ def run():
 
     camera.release()
 
-    with open('data.txt', 'w') as outfile:
-        json.dump(user_attempts, outfile)
+    with open('data.txt', 'r+') as json_file:
+        data = json.load(json_file)
+        data[username] = [user_attempts]
+        json_file.seek(0)
+        json.dump(data, json_file, indent=4)
 
 
 if __name__ == '__main__':
