@@ -5,6 +5,7 @@ import numpy as np
 from preprocessing import preprocess_keypoints
 from voice_assistant import VoiceAssistant
 from labels import labels
+import json
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -28,6 +29,7 @@ def check_letter(hand_landmarks):
     # Compare the predicted letter with the suggested letter
     predicted_letter = get_letter(hand_landmarks)
     print(f'Current letter: {assistant.current_letter}. Predicted letter: {predicted_letter}')
+    
     return predicted_letter == assistant.current_letter
 
 
@@ -35,6 +37,9 @@ def run():
     assistant.welcome()
     # For webcam input
     camera = cv2.VideoCapture(0)
+    user_attempts = {}
+    username = input("Enter username: ")
+    print("your username is " + username)
 
     with mp_hands.Hands(
             max_num_hands=1,
@@ -77,13 +82,20 @@ def run():
                         assistant.correct() if correct_sign else assistant.incorrect()
                 else:
                     assistant.suggest_letter()
+                
+                # Saving the number of attempts in a dictionary 
+                if assistant.current_letter in user_attempts.keys():
+                    user_attempts[assistant.current_letter] += 1
+                    print(len(user_attempts))
+                else:
+                    user_attempts[assistant.current_letter] = 1
+                    print(len(user_attempts))
 
             # Close window if space or escape key is pressed
             if key == ord(' ') or key == 27:
                 print('Key pressed. Exiting')
                 break
             
-
             # Adding which letter the user should show to the camera
             x, y, w, h = 40, 30, 270, 110
             alpha = 0.7
@@ -92,16 +104,18 @@ def run():
             cv2.rectangle(overlay, (x, x), (x + w, y + h + x), (0, 0, 0), -1)
             cv2.putText(overlay, (f'Current letter: {assistant.current_letter}'), (x + int(w/10), y + int(h/2)),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-            
             cv2.putText(overlay, (f'Predicted letter: {get_letter(hand_landmarks)}') if results.multi_hand_landmarks else "Show a sign", (x + int(w/10), y + int(h/1.5) + x),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-
             # Apply the overlay
             cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
 
             cv2.imshow('Sign Language Teacher', image)
 
+
     camera.release()
+
+    with open('data.txt', 'w') as outfile:
+        json.dump(user_attempts, outfile)
 
 
 if __name__ == '__main__':
