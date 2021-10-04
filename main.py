@@ -15,14 +15,18 @@ model = keras.models.load_model('model')
 
 update_time = 10
 
-
-def check_letter(hand_landmarks):
+def get_letter(hand_landmarks):
     # Predict the sign letter in the image
     preprocessed_input = preprocess_keypoints(hand_landmarks)
     prediction = model.predict([preprocessed_input])
     predicted_letter = labels[np.argmax(prediction)]
 
+    return predicted_letter
+
+
+def check_letter(hand_landmarks):
     # Compare the predicted letter with the suggested letter
+    predicted_letter = get_letter(hand_landmarks)
     print(f'Current letter: {assistant.current_letter}. Predicted letter: {predicted_letter}')
     return predicted_letter == assistant.current_letter
 
@@ -78,25 +82,21 @@ def run():
             if key == ord(' ') or key == 27:
                 print('Key pressed. Exiting')
                 break
+            
 
-            #### overlay space
-            x, y, w, h = 40, 30, 270, 60
-
-            #### alpha, the 4th channel of the image
-            alpha = 0.3
-
+            # Adding which letter the user should show to the camera
+            x, y, w, h = 40, 30, 270, 110
+            alpha = 0.7
             overlay = image.copy()
             image = image.copy()
-
-
-            ##### corner
-            cv2.rectangle(overlay, (x, x), (x + w, y + h), (0, 0, 0), -1)
-
-            ##### putText
-            cv2.putText(overlay, "Show the letter: __", (x + int(w/10), y + int(h/1.5)),
+            cv2.rectangle(overlay, (x, x), (x + w, y + h + x), (0, 0, 0), -1)
+            cv2.putText(overlay, (f'Current letter: {assistant.current_letter}'), (x + int(w/10), y + int(h/2)),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+            
+            cv2.putText(overlay, (f'Predicted letter: {get_letter(hand_landmarks)}') if results.multi_hand_landmarks else "Show a sign", (x + int(w/10), y + int(h/1.5) + x),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
-            #### apply the overlay
+            # Apply the overlay
             cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
 
             cv2.imshow('Sign Language Teacher', image)
