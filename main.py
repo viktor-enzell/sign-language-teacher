@@ -74,6 +74,27 @@ def run():
                 user_letter = make_prediction()
                 assistant.check_letter(user_letter)
 
+            #### overlay space
+            x, y, w, h = 40, 30, 270, 60
+
+            #### alpha, the 4th channel of the image
+            alpha = 0.3
+
+            overlay = image.copy()
+            image = image.copy()
+
+
+            ##### corner
+            cv2.rectangle(overlay, (x, x), (x + w, y + h), (0, 0, 0), -1)
+
+            ##### putText
+            cv2.putText(overlay, "Show the letter: __", (x + int(w/10), y + int(h/1.5)),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+
+            #### apply the overlay
+            cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
+
+
             cv2.imshow('MediaPipe Hands', image)
 
     cap.release()
