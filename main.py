@@ -80,16 +80,18 @@ def run():
                     if results.multi_hand_landmarks:
                         correct_sign = check_letter(hand_landmarks)
                         assistant.correct() if correct_sign else assistant.incorrect()
+
+                        # Saving the number of registered attempts in a dictionary
+                        if assistant.current_letter in user_attempts.keys():
+                            user_attempts[assistant.current_letter] += 1
+                            print(len(user_attempts))
+                        else:
+                            user_attempts[assistant.current_letter] = 1
+                            print(len(user_attempts))
                 else:
                     assistant.suggest_letter()       
                 
-                # Saving the number of attempts in a dictionary 
-                if assistant.current_letter in user_attempts.keys():
-                    user_attempts[assistant.current_letter] += 1
-                    print(len(user_attempts))
-                else:
-                    user_attempts[assistant.current_letter] = 1
-                    print(len(user_attempts))
+               
 
             # Close window if space or escape key is pressed
             if key == ord(' ') or key == 27:
@@ -116,7 +118,7 @@ def run():
 
     with open('data.txt', 'r+') as json_file:
         data = json.load(json_file)
-        data[username] = [user_attempts]
+        data[username] = user_attempts
         json_file.seek(0)
         json.dump(data, json_file, indent=4)
 
