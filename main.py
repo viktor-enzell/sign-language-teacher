@@ -34,12 +34,13 @@ def check_letter(hand_landmarks):
 
 
 def run():
-    assistant.welcome()
+    username = input("Enter username: ")
+    print("your username is " + username)
+
+    assistant.welcome(username)
     # For webcam input
     camera = cv2.VideoCapture(0)
     user_attempts = {}
-    username = input("Enter username: ")
-    print("your username is " + username)
 
     with mp_hands.Hands(
             max_num_hands=1,
