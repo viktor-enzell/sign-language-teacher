@@ -26,8 +26,8 @@ class VoiceAssistant:
     def finished_speaking(self):
         return self.finished_speaking_time < time.time()
 
-    def welcome(self):
-        self.text_to_speech('Welcome! I am your sign-language teacher. '
+    def welcome(self, username):
+        self.text_to_speech('Welcome ' + username + '! I am your sign-language teacher. '
                             'I will tell you a letter and you can show me the corresponding sign. '
                             'Let\'s go!')
 
