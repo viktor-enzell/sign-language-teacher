@@ -1,10 +1,8 @@
 import mediapipe as mp
 import cv2
-from tensorflow import keras
-import numpy as np
 from preprocessing import preprocess_keypoints
 from voice_assistant import VoiceAssistant
-from labels import labels
+import pickle
 import json
 
 mp_drawing = mp.solutions.drawing_utils
@@ -12,17 +10,15 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
 assistant = VoiceAssistant()
-model = keras.models.load_model('model')
+
+model = pickle.load(open('random_forest.sav', 'rb'))
 
 update_time = 10
 
 def get_letter(hand_landmarks):
     # Predict the sign letter in the image
     preprocessed_input = preprocess_keypoints(hand_landmarks)
-    prediction = model.predict([preprocessed_input])
-    predicted_letter = labels[np.argmax(prediction)]
-
-    return predicted_letter
+    return model.predict([preprocessed_input])
 
 
 def check_letter(hand_landmarks):
