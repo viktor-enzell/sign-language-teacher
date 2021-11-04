@@ -39,6 +39,7 @@ def run():
     # For webcam input
     camera = cv2.VideoCapture(0)
     user_attempts = {}
+    numb_letters = 0
 
     need_solution = False
 
@@ -62,8 +63,6 @@ def run():
             # Draw the hand annotations on the image.
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-            #img_alphabet = cv2.imread("bild.jpg")
 
             key = cv2.waitKey(update_time)
 
@@ -97,6 +96,7 @@ def run():
                                 need_solution = True
                 else:
                     assistant.suggest_letter()  
+                    numb_letters += 1
                     start = time.time()
                     need_solution = False
                 
@@ -121,7 +121,7 @@ def run():
             cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
 
             # Add a little image of the sign language alphabet when the user has tried for more than 30 seconds
-            if need_solution:
+            if need_solution :
                 img_alphabet = cv2.imread("alphabet.jpg")
 
                 x_offset = 40
@@ -132,14 +132,17 @@ def run():
 
             cv2.imshow('Sign Language Teacher', image)
             
+            user_attempts["total"] = numb_letters
 
     camera.release()
 
     with open('data.txt', 'r+') as json_file:
         data = json.load(json_file)
-        data[username] = user_attempts
+        temp = {}
+        temp[username] = user_attempts
+        merged_dict = data | temp
         json_file.seek(0)
-        json.dump(data, json_file, indent=4)
+        json.dump(merged_dict, json_file, indent=4)
 
 
 if __name__ == '__main__':
