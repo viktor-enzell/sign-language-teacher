@@ -20,7 +20,7 @@ update_time = 10
 def get_letter(hand_landmarks):
     # Predict the sign letter in the image
     preprocessed_input = preprocess_keypoints(hand_landmarks)
-    return model.predict([preprocessed_input])
+    return model.predict([preprocessed_input])[0]
 
 
 def check_letter(hand_landmarks):
