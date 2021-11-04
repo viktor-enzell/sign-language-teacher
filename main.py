@@ -84,6 +84,7 @@ def run():
 
                         if correct_sign:
                             assistant.correct()
+                            numb_letters += 1
                             stop = time.time()
                             if assistant.current_letter in user_attempts.keys():
                                 user_attempts[assistant.current_letter].append(stop-start)
@@ -96,7 +97,6 @@ def run():
                                 need_solution = True
                 else:
                     assistant.suggest_letter()  
-                    numb_letters += 1
                     start = time.time()
                     need_solution = False
                 
@@ -138,11 +138,18 @@ def run():
 
     with open('data.txt', 'r+') as json_file:
         data = json.load(json_file)
-        temp = {}
-        temp[username] = user_attempts
-        merged_dict = data | temp
+        if username in data:
+            for key in user_attempts:
+                if key in data[username]:
+                    temp_list = data[username][key] + user_attempts[key]
+                    print(temp_list)
+                    data[username][key] = temp_list
+                else:
+                    data[username][key] = user_attempts[key]
+        else:
+            data[username] = user_attempts
         json_file.seek(0)
-        json.dump(merged_dict, json_file, indent=4)
+        json.dump(data, json_file, indent=4)
 
 
 if __name__ == '__main__':
