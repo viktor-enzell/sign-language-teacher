@@ -20,5 +20,5 @@ def normalize_array(array):
 def preprocess_keypoints(land_marks):
     keypoints, distances= flatten_landmarks(land_marks)
     keypoints = normalize_array(keypoints)
-    distances = normalize_array(distances)
+    #distances = normalize_array(distances)
     return keypoints# + distances
