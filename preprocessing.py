@@ -9,7 +9,7 @@ def flatten_landmarks(hand_landmarks):
         keypoints.append(data_point.x)
         keypoints.append(data_point.y)
         keypoints.append(data_point.z)
-        distances.append(np.linalg.norm(data_point.x, data_point.y, data_point.z, ord=None, axis=None, keepdims=False))
+        #distances.append(np.linalg.norm(data_point.x, data_point.y, data_point.z, ord=None, axis=None, keepdims=False))
     return keypoints, distances
 
 # Make sure that the array is on a scale of [0,1]
@@ -21,4 +21,4 @@ def preprocess_keypoints(land_marks):
     keypoints, distances= flatten_landmarks(land_marks)
     keypoints = normalize_array(keypoints)
     distances = normalize_array(distances)
-    return keypoints + distances
+    return keypoints# + distances
