@@ -39,10 +39,12 @@ class VoiceAssistant:
                             'Let\'s go!')
 
     def get_upc(self):
-        upc_val = []
-        avg_q = sum(Q) / len(Q)
-        avg_q + c * np.sqrt(np.log(t/N))
-
+        N = total_atempts
+        upc_list = []    
+        for letters in user:
+            t = len(letter.times)
+            Q = sum(letter.times) / t
+            upc = Q + self.c * np.sqrt(np.log(t)/N)
 
     def suggest_letter(self):
         self.current_letter = random.choice(labels)
