@@ -82,7 +82,6 @@ def run():
                     # Compare the suggested letter with the sign letter on the image
                     if results.multi_hand_landmarks:
                         correct_sign = check_letter(hand_landmarks)
-                        # assistant.correct() if correct_sign else assistant.incorrect()
 
                         if correct_sign:
                             assistant.correct()
@@ -121,8 +120,9 @@ def run():
             # Apply the overlay
             cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
 
+            # Add a little image of the sign language alphabet when the user has tried for more than 30 seconds
             if need_solution:
-                img_alphabet = cv2.imread("bild.jpg")
+                img_alphabet = cv2.imread("alhabet.jpg")
 
                 x_offset = 40
                 y_offset = 200
