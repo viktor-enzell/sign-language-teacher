@@ -49,7 +49,7 @@ class VoiceAssistant:
             else:
                 times = user[letter]
                 N = len(times)
-                if t:
+                if N:
                     Q = sum(times)/(30*N)                        
                     ucb = Q + self.c * np.sqrt(np.log(t)/N)
                     ucb_list.append(ucb)
