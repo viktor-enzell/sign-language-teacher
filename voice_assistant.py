@@ -42,7 +42,7 @@ class VoiceAssistant:
         with open('data.txt', 'r+') as json_file:
             data = json.load(json_file)
             user  = data[self.username]
-            upc_list = [0]
+            ucb_list = [0]
             key_list = list(user)
         
             for letter in user:
@@ -53,11 +53,11 @@ class VoiceAssistant:
                     N = len(times)
                     if t:
                         Q = sum(times)/(30*N)                        
-                        upc = Q + self.c * np.sqrt(np.log(t)/N)
-                        upc_list.append(upc)
+                        ucb = Q + self.c * np.sqrt(np.log(t)/N)
+                        ucb_list.append(ucb)
                     else:
-                        upc_list.append(0)
-        return key_list[np.argmax(upc_list)]
+                        ucb_list.append(30)
+        return key_list[np.argmax(ucb_list)]
 
     def suggest_letter(self):
         self.current_letter = self.get_ucb()
