@@ -38,29 +38,26 @@ class VoiceAssistant:
                             'I will tell you a letter and you can show me the corresponding sign. '
                             'Let\'s go!')
     
-    def get_ucb(self):
-        with open('data.txt', 'r+') as json_file:
-            data = json.load(json_file)
-            user  = data[self.username]
-            ucb_list = [0]
-            key_list = list(user)
-        
-            for letter in user:
-                if letter == 'total':
-                    t = user['total']
+    def get_ucb(self, user):
+        ucb_list = [0]
+        key_list = list(user)
+    
+        for letter in user:
+            if letter == 'total':
+                t = user['total']
+            else:
+                times = user[letter]
+                N = len(times)
+                if t:
+                    Q = sum(times)/(30*N)                        
+                    ucb = Q + self.c * np.sqrt(np.log(t)/N)
+                    ucb_list.append(ucb)
                 else:
-                    times = user[letter]
-                    N = len(times)
-                    if t:
-                        Q = sum(times)/(30*N)                        
-                        ucb = Q + self.c * np.sqrt(np.log(t)/N)
-                        ucb_list.append(ucb)
-                    else:
-                        ucb_list.append(30)
+                    ucb_list.append(30)
         return key_list[np.argmax(ucb_list)]
 
-    def suggest_letter(self):
-        self.current_letter = self.get_ucb()
+    def suggest_letter(self, attempts):
+        self.current_letter = self.get_ucb(attempts)
         self.text_to_speech(f'Do the sign-language sign for letter {self.current_letter.upper()}')
         self.has_suggested = True
         return self.current_letter
