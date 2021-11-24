@@ -37,17 +37,30 @@ class VoiceAssistant:
         self.text_to_speech('Welcome ' + username + '! I am your sign-language teacher. '
                             'I will tell you a letter and you can show me the corresponding sign. '
                             'Let\'s go!')
-
-    def get_upc(self):
-        N = total_atempts
-        upc_list = []    
-        for letters in user:
-            t = len(letter.times)
-            Q = sum(letter.times) / t
-            upc = Q + self.c * np.sqrt(np.log(t)/N)
+    
+    def get_ucb(self):
+        with open('data.txt', 'r+') as json_file:
+            data = json.load(json_file)
+            user  = data[self.username]
+            upc_list = [0]
+            key_list = list(user)
+        
+            for letter in user:
+                if letter == 'total':
+                    t = user['total']
+                else:
+                    times = user[letter]
+                    N = len(times)
+                    if t:
+                        Q = sum(times)/(30*N)                        
+                        upc = Q + self.c * np.sqrt(np.log(t)/N)
+                        upc_list.append(upc)
+                    else:
+                        upc_list.append(0)
+        return key_list[np.argmax(upc_list)]
 
     def suggest_letter(self):
-        self.current_letter = random.choice(labels)
+        self.current_letter = self.get_ucb()
         self.text_to_speech(f'Do the sign-language sign for letter {self.current_letter.upper()}')
         self.has_suggested = True
         return self.current_letter
