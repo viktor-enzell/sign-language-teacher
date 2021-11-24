@@ -31,6 +31,19 @@ def check_letter(hand_landmarks):
     return predicted_letter == assistant.current_letter
 
 
+# Checking if user is already registered 
+def get_user_attempts(username):
+    with open('data.txt', 'r+') as json_file:
+        data = json.load(json_file)
+        if username in data:
+            return data[username]
+        else:
+            # Initalize the dictionary with all the possible labels
+            user_attempts = {'total': 0, 'a': [], 'b': [],
+                             'c': [], 'd': [], 'e': [], 'f': [], 'g': []}
+
+            return user_attempts
+
 def run():
     username = input("Enter username: ")
     print("your username is " + username)
@@ -38,9 +51,8 @@ def run():
     assistant.welcome(username)
     # For webcam input
     camera = cv2.VideoCapture(0)
-    # Initalize the dictionary with all the possible labels
-    user_attempts = {'a' : [], 'b' : [], 'c' : [], 'd' : [], 'e' : [], 'f' : [], 'g' : [] }
-    numb_letters = 0
+
+    user_attempts = get_user_attempts(username)
 
     need_solution = False
 
@@ -85,7 +97,7 @@ def run():
 
                         if correct_sign:
                             assistant.correct()
-                            numb_letters += 1
+                            user_attempts['total'] += 1
                             stop = time.time()
 
                             # Registering the time the user used on the letter
@@ -133,8 +145,6 @@ def run():
 
             cv2.imshow('Sign Language Teacher', image)
             
-            user_attempts["total"] = numb_letters
-
     camera.release()
 
     with open('data.txt', 'r+') as json_file:
