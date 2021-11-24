@@ -38,7 +38,8 @@ def run():
     assistant.welcome(username)
     # For webcam input
     camera = cv2.VideoCapture(0)
-    user_attempts = {}
+    # Initalize the dictionary with all the possible labels
+    user_attempts = {'a' : [], 'b' : [], 'c' : [], 'd' : [], 'e' : [], 'f' : [], 'g' : [] }
     numb_letters = 0
 
     need_solution = False
@@ -86,10 +87,12 @@ def run():
                             assistant.correct()
                             numb_letters += 1
                             stop = time.time()
-                            if assistant.current_letter in user_attempts.keys():
-                                user_attempts[assistant.current_letter].append(stop-start)
-                            else:
-                                user_attempts[assistant.current_letter] = [stop-start]
+                            user_attempts[assistant.current_letter].append(
+                                stop-start)
+                            #if assistant.current_letter in user_attempts.keys():
+                            #    user_attempts[assistant.current_letter].append(stop-start)
+                            #else:
+                            #    user_attempts[assistant.current_letter] = [stop-start]
                             print(user_attempts[assistant.current_letter])
                         else:
                             assistant.incorrect()
@@ -140,12 +143,16 @@ def run():
         data = json.load(json_file)
         if username in data:
             for key in user_attempts:
-                if key in data[username]:
-                    temp_list = data[username][key] + user_attempts[key]
-                    print(temp_list)
-                    data[username][key] = temp_list
-                else:
-                    data[username][key] = user_attempts[key]
+                temp_list = data[username][key] + user_attempts[key]
+                print(temp_list)
+                data[username][key] = temp_list
+
+                #if key in data[username]:
+                #    temp_list = data[username][key] + user_attempts[key]
+                #    print(temp_list)
+                #    data[username][key] = temp_list
+                #else:
+                #    data[username][key] = user_attempts[key]
         else:
             data[username] = user_attempts
         json_file.seek(0)
