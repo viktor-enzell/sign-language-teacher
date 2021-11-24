@@ -35,9 +35,10 @@ class VoiceAssistant:
     def welcome(self, username):
         self.username = username
         self.text_to_speech('Welcome ' + username + '! I am your sign-language teacher. '
-                            'I will tell you a letter and you can show me the corresponding sign. '
+                            'I will mention a letter and you show me the sign. '
                             'Let\'s go!')
     
+    # Takes dictionary of attempts and returs the letter with the highest UCB
     def get_ucb(self, user):
         ucb_list = [0]
         key_list = list(user)
@@ -56,16 +57,18 @@ class VoiceAssistant:
                     ucb_list.append(30)
         return key_list[np.argmax(ucb_list)]
 
+    # Based on dictionary of attempted times, reads and suggests a letter
     def suggest_letter(self, attempts):
         self.current_letter = self.get_ucb(attempts)
-        self.text_to_speech(f'Do the sign-language sign for letter {self.current_letter.upper()}')
+        self.text_to_speech(f'Do the sign for {self.current_letter.upper()}')
         self.has_suggested = True
         return self.current_letter
 
-
+    # Reads correct
     def correct(self):
         self.text_to_speech('Correct!')
         self.has_suggested = False
 
+    # Reads incorrect
     def incorrect(self):
         self.text_to_speech('Not quite there yet. Try again!')
