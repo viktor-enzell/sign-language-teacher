@@ -109,7 +109,7 @@ def run():
                             if start > 30:
                                 need_solution = True
                 else:
-                    assistant.suggest_letter()  
+                    assistant.suggest_letter(user_attempts)  
                     start = time.time()
                     need_solution = False
                 
@@ -149,13 +149,7 @@ def run():
 
     with open('data.txt', 'r+') as json_file:
         data = json.load(json_file)
-        if username in data:
-            for key in user_attempts:
-                temp_list = data[username][key] + user_attempts[key]
-                print(temp_list)
-                data[username][key] = temp_list
-        else:
-            data[username] = user_attempts
+        data[username] = user_attempts
         json_file.seek(0)
         json.dump(data, json_file, indent=4)
 
