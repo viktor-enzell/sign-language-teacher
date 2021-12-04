@@ -1,7 +1,5 @@
 .venv
-tmp/voice.mp3
-tmp/opencv_frame.png
-models
+tmp/*
 .DS_Store
 .idea
 __pycache__
