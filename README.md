@@ -1,6 +1,9 @@
 # Sign Language Teacher
 Sign Language Teacher is a software that teaches you sign language by continuously evaluating your sign language skills and adapting accordingly.
 
+![Software preview](img/preview.gif)
+
+
 ## Getting started
 The recommended Python version for this project is Python 3.8 or higher. It is generally recommended to start a new Virtualenv before installing the project requirements.
 
