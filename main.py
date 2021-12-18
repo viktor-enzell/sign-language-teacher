@@ -137,7 +137,8 @@ def run():
 
             # Add a little image of the sign language alphabet when the user has tried for more than 30 seconds
             if need_solution:
-                img_alphabet = cv2.imread("img/alphabet.jpg")
+                wanted_image = assistant.current_letter
+                img_alphabet = cv2.imread("img/" + wanted_image + ".png")
 
                 x_offset = 40
                 y_offset = 200
