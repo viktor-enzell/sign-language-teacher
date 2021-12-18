@@ -1,12 +1,8 @@
-import random
 import time
 
-from cv2 import QRCodeDetector
-from labels import labels
 import gtts
 from playsound import playsound
 import audioread
-import json
 import numpy as np
 
 
@@ -35,14 +31,14 @@ class VoiceAssistant:
     def welcome(self, username):
         self.username = username
         self.text_to_speech('Welcome ' + username + '! I am your sign-language teacher. '
-                            'I will mention a letter and you show me the sign. '
-                            'Let\'s go!')
-    
+                                                    'I will mention a letter and you show me the sign. '
+                                                    'Let\'s go!')
+
     # Takes dictionary of attempts and returs the letter with the highest UCB
     def get_ucb(self, user):
         ucb_list = [0]
         key_list = list(user)
-    
+
         for letter in user:
             if letter == 'total':
                 t = user['total']
@@ -50,8 +46,8 @@ class VoiceAssistant:
                 times = user[letter]
                 N = len(times)
                 if N:
-                    Q = sum(times)/(30*N)                        
-                    ucb = Q + self.c * np.sqrt(np.log(t)/N)
+                    Q = sum(times) / (30 * N)
+                    ucb = Q + self.c * np.sqrt(np.log(t) / N)
                     ucb_list.append(ucb)
                 else:
                     ucb_list.append(30)

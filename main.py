@@ -1,11 +1,10 @@
 import mediapipe as mp
-import numpy as np
 import cv2
 from preprocessing import preprocess_keypoints
 from voice_assistant import VoiceAssistant
 import pickle
 import json
-import time 
+import time
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -13,9 +12,10 @@ mp_hands = mp.solutions.hands
 
 assistant = VoiceAssistant()
 
-model = pickle.load(open('random_forest.sav', 'rb'))
+model = pickle.load(open('models/random_forest.sav', 'rb'))
 
 update_time = 10
+
 
 def get_letter(hand_landmarks):
     # Predict the sign letter in the image
@@ -27,7 +27,7 @@ def check_letter(hand_landmarks):
     # Compare the predicted letter with the suggested letter
     predicted_letter = get_letter(hand_landmarks)
     print(f'Current letter: {assistant.current_letter}. Predicted letter: {predicted_letter}')
-    
+
     return predicted_letter == assistant.current_letter
 
 
@@ -43,6 +43,7 @@ def get_user_attempts(username):
                              'c': [], 'd': [], 'e': [], 'f': [], 'g': []}
 
             return user_attempts
+
 
 def run():
     username = input("Enter username: ")
@@ -102,40 +103,41 @@ def run():
 
                             # Registering the time the user used on the letter
                             user_attempts[assistant.current_letter].append(
-                                stop-start)
+                                stop - start)
                             print(user_attempts[assistant.current_letter])
                         else:
                             assistant.incorrect()
                             if start > 30:
                                 need_solution = True
                 else:
-                    assistant.suggest_letter(user_attempts)  
+                    assistant.suggest_letter(user_attempts)
                     start = time.time()
                     need_solution = False
-                
-               
+
             # Close window if space or escape key is pressed
             if key == ord(' ') or key == 27:
                 print('Key pressed. Exiting')
                 break
-            
+
             # Adding which letter the user should show to the camera
-            
+
             x, y, w, h = 40, 30, 480, 110
             alpha = 0.7
             overlay = image.copy()
             image = image.copy()
             cv2.rectangle(overlay, (x, x), (x + w, y + h + x), (0, 0, 0), -1)
-            cv2.putText(overlay, (f'Show letter: {assistant.current_letter}'), (x + int(w/10), y + int(h/2)),
+            cv2.putText(overlay, (f'Show letter: {assistant.current_letter}'), (x + int(w / 10), y + int(h / 2)),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-            cv2.putText(overlay, (f'Letter you are currently signing: {get_letter(hand_landmarks)[0]}') if results.multi_hand_landmarks else "Show a sign", (x + int(w/10), y + int(h/1.5) + x),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+            cv2.putText(overlay, (
+                f'Letter you are currently signing: {get_letter(hand_landmarks)[0]}') if results.multi_hand_landmarks else "Show a sign",
+                        (x + int(w / 10), y + int(h / 1.5) + x),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
             # Apply the overlay
             cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
 
             # Add a little image of the sign language alphabet when the user has tried for more than 30 seconds
-            if need_solution :
-                img_alphabet = cv2.imread("alphabet.jpg")
+            if need_solution:
+                img_alphabet = cv2.imread("img/alphabet.jpg")
 
                 x_offset = 40
                 y_offset = 200
@@ -144,7 +146,7 @@ def run():
                 image[y_offset:y_end, x_offset:x_end] = img_alphabet
 
             cv2.imshow('Sign Language Teacher', image)
-            
+
     camera.release()
 
     with open('data.txt', 'r+') as json_file:
