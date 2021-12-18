@@ -139,7 +139,6 @@ def run():
             if need_solution:
                 wanted_image = assistant.current_letter
                 img_alphabet = cv2.imread("img/" + wanted_image + ".png")
-                #img_alphabet = cv2.imread("img/b.png")
 
                 x_offset = 40
                 y_offset = 200
