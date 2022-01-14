@@ -1,10 +1,8 @@
 import time
-
 import gtts
 from playsound import playsound
 import audioread
 import numpy as np
-
 
 class VoiceAssistant:
     current_letter = None

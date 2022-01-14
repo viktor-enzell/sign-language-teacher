@@ -9,11 +9,8 @@ import time
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
-
 assistant = VoiceAssistant()
-
 model = pickle.load(open('models/random_forest.sav', 'rb'))
-
 update_time = 10
 
 
@@ -52,9 +49,7 @@ def run():
     assistant.welcome(username)
     # For webcam input
     camera = cv2.VideoCapture(0)
-
     user_attempts = get_user_attempts(username)
-
     need_solution = False
 
     with mp_hands.Hands(
@@ -120,7 +115,6 @@ def run():
                 break
 
             # Adding which letter the user should show to the camera
-
             x, y, w, h = 40, 30, 480, 110
             alpha = 0.7
             overlay = image.copy()
@@ -155,7 +149,6 @@ def run():
         data[username] = user_attempts
         json_file.seek(0)
         json.dump(data, json_file, indent=4)
-
 
 if __name__ == '__main__':
     run()
